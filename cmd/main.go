@@ -5,79 +5,54 @@ import (
 	"fmt"
 	"strings"
 	"../db"
-	"../fixer"
+	//"../fixer"
+	"../types"
 )
-
-func handlerFunc(w http.ResponseWriter, r *http.Request) {
-
-}
 
 func handlerLatest(w http.ResponseWriter, r *http.Request) {
 	langs := strings.Split(strings.Split(r.URL.Path, "latest/")[1], "/")
-	session := db.DbConnect()
-	if session == nil {
-		return
-	}
-	defer session.Close()
 
-	collection := session.DB("currencydb").C("tick")
-	dbSize, err := collection.Count()
-	if err != nil {
-		return
-	}
-	var data fixer.FixerPayload
-	collection.Find(nil).Skip(dbSize - 1).One(&data)
-
-	valid := isLanguageInputValid(data, langs)
-	if !valid {
-		fmt.Fprint(w, "Invalid currencies")
+	data := db.GetCurrencies(1, 1)
+	if data == nil {
 		return
 	}
 
-	if langs[0] == "EUR" {
-		fmt.Fprint(w, data.Rates[langs[1]])
-	} else if langs[1] == "EUR" {
-		fmt.Fprint(w,  1 / data.Rates[langs[0]])
-	}else {
-		fmt.Fprint(w, data.Rates[langs[1]] / data.Rates[langs[0]])
-	}
-
-}
-
-func handlerAverage(w http.ResponseWriter, r *http.Request) {
-	langs := strings.Split(strings.Split(r.URL.Path, "average/")[1], "/")
-
-	session := db.DbConnect()
-	if session == nil {
-		return
-	}
-	defer session.Close()
-
-	collection := session.DB("currencydb").C("tick")
-	dbSize, err := collection.Count()
-	if err != nil {
-		return
-	}
-	var data[] fixer.FixerPayload
-	dif := 7 - dbSize
-	if dif < 0 {
-		dif = 0
-	}
-	collection.Find(nil).Skip(dbSize - 7 + dif).All(&data)
 	valid := isLanguageInputValid(data[0], langs)
 	if !valid {
 		fmt.Fprint(w, "Invalid currencies")
 		return
 	}
 
-	fmt.Fprint(w, len(data))
+	if langs[0] == "EUR" {
+		fmt.Fprint(w, data[0].Rates[langs[1]])
+	} else if langs[1] == "EUR" {
+		fmt.Fprint(w,  1 / data[0].Rates[langs[0]])
+	}else {
+		fmt.Fprint(w, data[0].Rates[langs[1]] / data[0].Rates[langs[0]])
+	}
+}
+
+func handlerAverage(w http.ResponseWriter, r *http.Request) {
+	langs := strings.Split(strings.Split(r.URL.Path, "average/")[1], "/")
+
+	data := db.GetCurrencies(1, 7)
+	if data == nil {
+		return
+	}
+
+	valid := isLanguageInputValid(data[0], langs)
+	if !valid {
+		fmt.Fprint(w, "Invalid currencies")
+		return
+	}
+
 	var lang0Avg, lang1Avg float64
 	for i := 0; i < len(data); i++ {
 		lang0Avg += data[i].Rates[langs[0]]
 		lang1Avg += data[i].Rates[langs[1]]
 	}
-	lang0Avg /= 7 - float64(dif)
-	lang1Avg /= 7 - float64(dif)
+	lang0Avg /= 7 - float64(7 - len(data))
+	lang1Avg /= 7 - float64(7 - len(data))
 
 	if langs[0] == "EUR" {
 		fmt.Fprint(w, lang1Avg)
@@ -90,7 +65,7 @@ func handlerAverage(w http.ResponseWriter, r *http.Request) {
 
 // checks if the specified currencies actually exists and are not duplicates.
 // if so, ok wil be set to true, otherwise false
-func isLanguageInputValid(data fixer.FixerPayload, langs[] string) bool {
+func isLanguageInputValid(data types.CurrencyData, langs[] string) bool {
 	var ok bool
 	for i := 0; i <= 1; i++ {
 		_, ok = data.Rates[langs[i]]
@@ -110,11 +85,9 @@ func isLanguageInputValid(data fixer.FixerPayload, langs[] string) bool {
 	}
 }
 
-
 func main() {
-	fixer.Start()
+	//fixer.Start()
 
-	http.HandleFunc("/", handlerFunc)
 	http.HandleFunc("/latest/", handlerLatest)
 	http.HandleFunc("/average/", handlerAverage)
 	http.ListenAndServe("127.0.0.1:8081", nil)

@@ -7,13 +7,8 @@ import (
 	"fmt"
 	"time"
 	"../db"
+	"../types"
 )
-
-type FixerPayload struct {
-	Base  string
-	Date  string
-	Rates map[string]float64
-}
 
 func fetchDataFromFixer() {
 	resp, err := http.Get("http://api.fixer.io/latest?base=EUR")
@@ -22,19 +17,10 @@ func fetchDataFromFixer() {
 		return
 	}
 
-	payload := FixerPayload{}
+	payload := types.CurrencyData{}
 	json.NewDecoder(resp.Body).Decode(&payload)
 
-	session := db.DbConnect()
-	if session == nil {
-		return
-	}
-	defer session.Close()
-
-	err2 := session.DB("currencydb").C("tick").Insert(payload)
-	if err2 != nil {
-		log.Fatal("Error on session.DB(", "currencydb", ").C(", "tick", ").Insert(<Payload>)", err2.Error())
-	}
+	db.InsertCurrencyTick(payload)
 
 	fmt.Println("tick")
 }

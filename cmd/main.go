@@ -8,7 +8,6 @@ import (
 	"github.com/einarkb/cloud_ass_2/types"
 	"encoding/json"
 	"gopkg.in/mgo.v2/bson"
-	"os"
 )
 
 // Prints the newest rate between the 2 specified currencies.

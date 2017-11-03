@@ -2,9 +2,9 @@ package fixer
 
 import (
 	"testing"
-	"../db"
+	"github.com/einarkb/cloud_ass_2/db"
 	"net/http"
-	"../types"
+	"github.com/einarkb/cloud_ass_2/types"
 	"encoding/json"
 )
 

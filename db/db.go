@@ -4,7 +4,7 @@ import (
 	"gopkg.in/mgo.v2"
 	"log"
 	"time"
-	"github.com/einarkb/cloud_ass_2/tree/master/types"
+	"github.com/einarkb/cloud_ass_2/types"
 	"gopkg.in/mgo.v2/bson"
 )
 

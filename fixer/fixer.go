@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
-	"github.com/einarkb/clodsud_ass_2/db"
+	"github.com/einarkb/cloud_ass_2/db"
 	"github.com/einarkb/cloud_ass_2/types"
 )
 

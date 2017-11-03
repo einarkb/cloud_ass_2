@@ -8,6 +8,7 @@ import (
 	"github.com/einarkb/cloud_ass_2/types"
 	"encoding/json"
 	"gopkg.in/mgo.v2/bson"
+	"github.com/einarkb/cloud_ass_2/fixer"
 )
 
 // Prints the newest rate between the 2 specified currencies.
@@ -164,7 +165,7 @@ func isLanguageInputValid(data types.CurrencyData, langs[] string) bool {
 }
 
 func main() {
-	//fixer.Start()
+	fixer.Start()
 
 	http.HandleFunc("/latest/", handlerLatest)
 	http.HandleFunc("/average/", handlerAverage)

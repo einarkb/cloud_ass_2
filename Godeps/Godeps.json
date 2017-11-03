@@ -1,0 +1,8 @@
+{
+	"ImportPath": "github.com/einarkb/cloud_ass_2",
+	"GoVersion": "go1.9",
+	"Packages": [
+		"./..."
+	],
+	"Deps": []
+}

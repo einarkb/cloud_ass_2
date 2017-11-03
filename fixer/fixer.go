@@ -10,6 +10,7 @@ import (
 	"../types"
 )
 
+//fetchDataFromFixer reuqtest data from the fixer and stores it in the database
 func fetchDataFromFixer() {
 	resp, err := http.Get("http://api.fixer.io/latest?base=EUR")
 	if err != nil {
@@ -20,12 +21,14 @@ func fetchDataFromFixer() {
 	payload := types.CurrencyData{}
 	json.NewDecoder(resp.Body).Decode(&payload)
 
-	db.InsertCurrencyTick(payload)
+	db.InsertCurrencyTick(payload, "tick")
 
 	fmt.Println("tick")
 }
 
+// startTicker creates a loop that will call fetchDataFromFixer once every 24 hours
 func startTicker() {
+	fetchDataFromFixer()
 	ticker := time.NewTicker(time.Second)
 	for {
 		fetchDataFromFixer()
@@ -33,6 +36,7 @@ func startTicker() {
 	}
 }
 
+// Start creates a thread that runs the fixer
 func Start() {
 	go startTicker()
 }

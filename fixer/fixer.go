@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
-	"../db"
-	"../types"
+	"github.com/einarkb/cloud_ass_2/tree/master/db"
+	"github.com/einarkb/cloud_ass_2/tree/master/types"
 )
 
 //fetchDataFromFixer reuqtest data from the fixer and stores it in the database

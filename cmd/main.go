@@ -9,7 +9,7 @@ import (
 	"encoding/json"
 	"gopkg.in/mgo.v2/bson"
 	"os"
-	"log"
+	//"log"
 )
 
 // Prints the newest rate between the 2 specified currencies.
@@ -165,24 +165,15 @@ func isLanguageInputValid(data types.CurrencyData, langs[] string) bool {
 	}
 }
 
-func determineListenAddress() (string, error) {
-	port := os.Getenv("PORT")
-	if port == "" {
-		return "", fmt.Errorf("$PORT not set")
+func main() {
+	http.HandleFunc("/", hello)
+	fmt.Println("listening...")
+	err := http.ListenAndServe(":"+os.Getenv("PORT"), nil)
+	if err != nil {
+		panic(err)
 	}
-	return ":" + port, nil
 }
 
-func main() {
-	//fixer.Start()
-
-	addr, err := determineListenAddress()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	http.HandleFunc("/latest/", handlerLatest)
-	http.HandleFunc("/average/", handlerAverage)
-	http.HandleFunc("/", handlerRoot)
-	http.ListenAndServe(addr, nil)
+func hello(res http.ResponseWriter, req *http.Request) {
+	fmt.Fprintln(res, "hello, heroku")
 }

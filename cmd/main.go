@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"gopkg.in/mgo.v2/bson"
 	"os"
-	//"log"
 )
 
 // Prints the newest rate between the 2 specified currencies.
@@ -166,14 +165,10 @@ func isLanguageInputValid(data types.CurrencyData, langs[] string) bool {
 }
 
 func main() {
-	http.HandleFunc("/", hello)
-	fmt.Println("listening...")
-	err := http.ListenAndServe(":"+os.Getenv("PORT"), nil)
-	if err != nil {
-		panic(err)
-	}
-}
+	//fixer.Start()
 
-func hello(res http.ResponseWriter, req *http.Request) {
-	fmt.Fprintln(res, "hello, heroku")
+	http.HandleFunc("/latest/", handlerLatest)
+	http.HandleFunc("/average/", handlerAverage)
+	http.HandleFunc("/", handlerRoot)
+	http.ListenAndServe("8080", nil)
 }
